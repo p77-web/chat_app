@@ -18,14 +18,16 @@ let io = socketIO(server);
 io.on('connection', (socket) => {
   console.log('New user connected');
 
-  socket.emit('newMessage', {
-    from: 'Ioana',
-    text: 'Sup',
-    createdAt: 15478965
-  });
+  // socket.emit emits an event to a single connection
 
   socket.on('createMessage', (message) => {
     console.log('Create message', message);
+    // io.emit emits an event to every single connection
+    io.emit('newMessage', {
+      from: message.from,
+      text: message.text,
+      createdAt: new Date().getTime()
+    })
   })
 
   socket.on('disconnect', () => {
