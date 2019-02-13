@@ -31,7 +31,9 @@ io.on('connection', (socket) => {
     // io.emit emits an event to every single connection
     io.emit('newMessage', generateMessage(message.from, message.text));
     // this is the function in the emitter - see index.js here
-    callback('This is from the server');
+
+    // callback('This is from the server');
+    callback();
     // socket.broadcast.emit emits an event but except here
     // socket.broadcast.emit('newMessage', {
     //   from: message.from,
