@@ -9,12 +9,23 @@ socket.on('disconnect', function () {
 });
 
 socket.on('newMessage', function (message) {
-  // console.log('New message received', message);
+  // using templates
   let formattedTime = moment(message.createdAt).format('h:mm:ss a');
-  let li = jQuery('<li></li>');
-  li.text(`${message.from} @${formattedTime}: ${message.text}`);
+  let template = jQuery('#message-template').html();
+  let html = Mustache.render(template, {
+    from: message.from,
+    text: message.text,
+    createdAt: formattedTime
+  });
+  jQuery('#messages').append(html);
 
-  jQuery('#messages').append(li);
+  // before using mustache.js
+  // // console.log('New message received', message);
+  // let formattedTime = moment(message.createdAt).format('h:mm:ss a');
+  // let li = jQuery('<li></li>');
+  // li.text(`${message.from} @${formattedTime}: ${message.text}`);
+  //
+  // jQuery('#messages').append(li);
 });
 
 // socket.emit('createMessage', {
@@ -28,13 +39,13 @@ socket.on('newMessage', function (message) {
 
 socket.on('newLocationMessage', function (message) {
   let formattedTime = moment(message.createdAt).format('h:mm:ss a');
-  let li = jQuery('<li></li>');
-  let a = jQuery('<a target="_blank">My location</a>');
-
-  li.text(`${message.from} @${formattedTime}: `);
-  a.attr('href', message.url);
-  li.append(a);
-  jQuery('#messages').append(li);
+  let template = jQuery('#location-message-template').html();
+  let html = Mustache.render(template, {
+    from: message.from,
+    createdAt: formattedTime,
+    url: message.url
+  });
+  jQuery('#messages').append(html);
 });
 
 jQuery('#message-form').on('submit', function (event) {
