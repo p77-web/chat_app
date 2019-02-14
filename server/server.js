@@ -46,9 +46,14 @@ io.on('connection', (socket) => {
   });
 
   socket.on('createMessage', (message, callback) => {
-    console.log('Create message', message);
-    // io.emit emits an event to every single connection
-    io.emit('newMessage', generateMessage(message.from, message.text));
+    // console.log('Create message', message);
+    let user = users.getUser(socket.id);
+
+    if (user && isRealString(message.text)) {
+      // io.emit emits an event to every single connection
+      io.to(user.room).emit('newMessage', generateMessage(user.name, message.text));
+    }
+
     // this is the function in the emitter - see index.js here
 
     // callback('This is from the server');
@@ -62,8 +67,12 @@ io.on('connection', (socket) => {
   });
 
   socket.on('createLocationMassage', (coords) => {
-    // console.log(`Lat: ${coords.latitude}, long: ${coords.longitude}`);
-    io.emit('newLocationMessage', generateLocationMessage('Admin', coords.latitude, coords.longitude));
+    let user = users.getUser(socket.id);
+
+    if (user) {
+      // console.log(`Lat: ${coords.latitude}, long: ${coords.longitude}`);
+      io.to(user.room).emit('newLocationMessage', generateLocationMessage(user.name, coords.latitude, coords.longitude));
+    }
   });
 
   socket.on('disconnect', () => {
